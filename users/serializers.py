@@ -75,3 +75,36 @@ class CreateUserSerializer(ModelSerializer):
             email=email, username=username, password=password
         )
         return user
+
+
+class LoginSerializer(ModelSerializer):
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(label="Username", required=False)
+    password = serializers.CharField(
+        label="Password",
+        style={"input_type": "password"},
+        trim_whitespace=False,
+    )
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+        username = attrs.get("username")
+        if email:
+            user = User.objects.filter(email__iexact=email).first()
+            if user and user.check_password(password):
+                attrs["user"] = user
+                return attrs
+            else:
+                raise serializers.ValidationError({"error": "Invalid credentials"})
+        else:
+            user = User.objects.filter(username__iexact=username).first()
+            if user and user.check_password(password):
+                attrs["user"] = user
+                return attrs
+            else:
+                raise serializers.ValidationError({"error": "Invalid credentials"})
+
+    class Meta:
+        model = User
+        fields = ("email", "username", "password")
