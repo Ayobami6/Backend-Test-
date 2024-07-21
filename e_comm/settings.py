@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import logging
+import logging.config
+from typing import Dict
+from django.utils.log import DEFAULT_LOGGING
+from datetime import timedelta
+from utils.utils import get_env
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-qp!r3d@sil*q(e%_7!n$8c!scoqalz^cjvozr36t*sgtpnsunx"
+SECRET_KEY = get_env("SECRET_KEY", "secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -110,19 +117,77 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Lagos"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+logger = logging.getLogger(__name__)
+
+LOG_LEVEL = "INFO"
+
+try:
+    logging.config.dictConfig(
+        {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "console": {
+                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                },
+                "file": {
+                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                },
+                "django.server": DEFAULT_LOGGING["formatters"]["django.server"],
+            },
+            "handlers": {
+                "console": {
+                    "level": LOG_LEVEL,
+                    "class": "logging.StreamHandler",
+                    "formatter": "console",
+                },
+                "file": {
+                    "level": LOG_LEVEL,
+                    "class": "logging.handlers.RotatingFileHandler",
+                    "formatter": "file",
+                    "filename": BASE_DIR / "logs" / "django.log",
+                    "maxBytes": 1024 * 1024 * 10,
+                    "backupCount": 5,
+                },
+                "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
+            },
+            "loggers": {
+                "": {
+                    "level": LOG_LEVEL,
+                    "handlers": ["console", "file"],
+                    "propagate": False,
+                },
+                "apps": {
+                    "level": LOG_LEVEL,
+                    "handlers": ["console", "file"],
+                    "propagate": False,
+                },
+            },
+            "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
+        }
+    )
+
+except Exception:
+    pass
