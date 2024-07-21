@@ -87,8 +87,12 @@ WSGI_APPLICATION = "e_comm.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": get_env("DB_NAME", "e-comm"),
+        "USER": get_env("DB_USER", "e-comm"),
+        "PASSWORD": get_env("DB_PASSWD", "password"),
+        "HOST": get_env("DB_HOST", "localhost"),
+        "PORT": int(get_env("DB_PORT", "5432")),
     }
 }
 
