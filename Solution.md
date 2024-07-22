@@ -11,6 +11,11 @@ poetry install
 ```sh
 poetry shell
 ```
+- Set up PSQL Database configuration
+```sh
+cp .env.sample .env
+# update the configuration details inside the .env
+```
 - Run makemigrations (This is because dev migrations are not being pushed to Github)
 ```sh
 make mms
