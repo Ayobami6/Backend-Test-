@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from orders.serializers import OrderSerializer
+from orders.serializers import OrderListSerializer, OrderSerializer
 from utils.response import service_response
 from utils.exceptions import handle_internal_server_exception
+from .models import Order
 
 
 class PlaceOrderAPIView(APIView):
@@ -29,6 +30,27 @@ class PlaceOrderAPIView(APIView):
                 status="error",
                 message=serializer.errors,
                 status_code=400,
+            )
+        except Exception:
+            return handle_internal_server_exception()
+
+
+class OrderListAPIView(APIView):
+    """List all order history for authenticated user"""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderListSerializer
+
+    def get(self, request, *args, **kwargs):
+        """List all orders get handler"""
+        try:
+            user = request.user
+            orders = Order.objects.filter(user=user)
+            serializer = self.serializer_class(orders, many=True)
+            return service_response(
+                status="success",
+                data=serializer.data,
+                status_code=200,
             )
         except Exception:
             return handle_internal_server_exception()
