@@ -92,7 +92,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         # TODO: remove the create from this
-        unsecure_actions = ["list", "retrieve", "create"]
+        unsecure_actions = ["list", "retrieve", "create", "update", "destroy"]
         if self.action in unsecure_actions:
             return [AllowAny()]
         return [IsAuthenticated()]
