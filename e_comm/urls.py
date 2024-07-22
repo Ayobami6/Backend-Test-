@@ -23,5 +23,6 @@ from users.views import RootPage
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("users.urls")),
+    path("api/v1/", include("products.urls")),
     path("", RootPage.as_view(), name="root"),
 ]
