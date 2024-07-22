@@ -5,6 +5,8 @@ from orders.serializers import OrderListSerializer, OrderSerializer
 from utils.response import service_response
 from utils.exceptions import handle_internal_server_exception
 from .models import Order
+from rest_framework import serializers
+import re
 
 
 class PlaceOrderAPIView(APIView):
@@ -29,6 +31,14 @@ class PlaceOrderAPIView(APIView):
             return service_response(
                 status="error",
                 message=serializer.errors,
+                status_code=400,
+            )
+        except serializers.ValidationError as e:
+            match = re.search(r"Product (\d+) not found", str(e.detail))
+            message = str(match.group())
+            return service_response(
+                status="error",
+                message=message,
                 status_code=400,
             )
         except Exception:

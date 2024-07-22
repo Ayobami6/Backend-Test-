@@ -23,9 +23,14 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         products_data = validated_data.pop("products")
         order = Order.objects.create(**validated_data)
-        print(products_data)
+        # TODO: refactor to handle product that doesn't exist
+
         for product_data in products_data:
-            product = Product.objects.get(id=int(product_data["product_id"]))
+            try:
+                product = Product.objects.get(id=int(product_data["product_id"]))
+            except Product.DoesNotExist:
+                raise serializers.ValidationError(f"Product {product_data["product_id"]} not found")
+            # TODO: check product inventory if in sto
             OrderProduct.objects.create(
                 order=order, product=product, quantity=product_data["quantity"]
             )
