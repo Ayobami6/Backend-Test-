@@ -27,9 +27,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
         for product_data in products_data:
             try:
-                product = Product.objects.get(id=int(product_data["product_id"]))
+                product = Product.objects.get(
+                    id=int(product_data["product_id"]))
             except Product.DoesNotExist:
-                raise serializers.ValidationError(f"Product {product_data["product_id"]} not found")
+                raise serializers.ValidationError(
+                    f"Product {product_data['product_id']} not found")
             # TODO: check product inventory if in sto
             OrderProduct.objects.create(
                 order=order, product=product, quantity=product_data["quantity"]
@@ -45,11 +47,13 @@ class OrderProductListSerializer(ModelSerializer):
         source="product.price", read_only=True, max_digits=10, decimal_places=2
     )
     # quantity = serializers.IntegerField()
-    subtotal = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
+    subtotal = serializers.DecimalField(
+        read_only=True, max_digits=10, decimal_places=2)
 
     class Meta:
         model = OrderProduct
-        fields = ["product_id", "product_name", "product_price", "quantity", "subtotal"]
+        fields = ["product_id", "product_name",
+                  "product_price", "quantity", "subtotal"]
         read_only_fields = ["subtotal"]
 
 

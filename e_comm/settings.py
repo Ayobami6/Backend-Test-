@@ -16,6 +16,11 @@ import logging.config
 from django.utils.log import DEFAULT_LOGGING
 from datetime import timedelta
 from utils.utils import get_env
+import os
+from dotenv import load_dotenv
+from urllib.parse import urlparse
+
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -99,6 +104,16 @@ DATABASES = {
         "PORT": int(get_env("DB_PORT", "5432")),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': tmpPostgres.path.replace('/', ''),
+#         'USER': tmpPostgres.username,
+#         'PASSWORD': tmpPostgres.password,
+#         'HOST': tmpPostgres.hostname,
+#         'PORT': 5432,
+#     }
+# }
 # restframework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
