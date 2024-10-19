@@ -32,9 +32,9 @@ make run
 ```
 
 ## Deployment
-Current the application is being deployed to AWS ECS(Elastic Container Service)
+Currently the application is being deployed to AWS ECS(Elastic Container Service)
 
-live url at
+- live url at
 [live](http://liberty-lb-723786584.eu-north-1.elb.amazonaws.com)
 
 - Visit Postman Documentation
